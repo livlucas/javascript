@@ -10,24 +10,25 @@
   conditional statements at https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/if...else). 
 */
 
+var lyrics = {
+    first: 'of beer on the wall,',
+    second: 'of beer.',
+    third: 'Take one down and pass it around,',
+    fourth: 'of beer on the wall.',
+    fifth: 'No more bottle of beer on the wall, no more bottles of beer',
+    final: 'Go to the store and buy some more, 99 bottles of beer on the wall.'
+};
+
+function pluralBottle(i) {
+    return (i > 1) ? 'bottles' : 'bottle';
+}
+
 function songLyrics() {
-	var i;
-
 	for (i = 99; i > 0; i -= 1) {
-		if (i === 1) {
-			return console.log(i + " bottle of beer on the wall," 
-			+ " " + i + " bottle of beer."
-			+ "\nTake one down and pass it around,"
-			+ " " + i + " bottle of beer on the wall."
-			+ "\n\nNo more bottles of beer on the wall, no more bottles of beer."
-					+ "\nGo to the store and buy some more, 99 bottles of beer on the wall."
-			);
-		}
-
-		console.log(i + " bottles of beer on the wall," 
-			+ " " + i + " bottles of beer."
-			+ "\nTake one down and pass it around,"
-			+ " " + (i - 1) + " bottles of beer on the wall."
+		console.log(
+		    i + ' ' + pluralBottle(i) + ' ' + lyrics.first + '\n' +
+		    i + ' ' + pluralBottle(i) + ' ' + lyrics.second + '\n' +
+		    lyrics.third + ' ' + (i - 1) + ' ' + pluralBottle(i - 1) + ' ' + lyrics.fourth
 		);
 	}
 }
