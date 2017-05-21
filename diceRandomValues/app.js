@@ -16,24 +16,13 @@ Creating a page where every time the page is loaded, the console logs random val
 */
 
 
-function randomDiceNumber() {
-	var firstDie = Math.floor((Math.random() * 6) + 1) ,
-		secondDie = Math.floor((Math.random() * 6) + 1);
-
-	console.log(firstDie);
-	console.log(secondDie);
-	console.log((firstDie) + (secondDie));
+function rollDie() {
+	return Math.floor((Math.random() * 6) + 1);
 }
 
-window.onload = randomDiceNumber;
+window.onload = function () {
+    var firstDie = rollDie(), 
+        secondDie = rollDie();
 
-
-function randomDiceNumberAux(firstDie, secondDie) {
-	console.log(firstDie);
-	console.log(secondDie);
-	console.log((firstDie) + (secondDie));
-
-}
-
-var firstDie = Math.floor((Math.random() * 5) + 1);
-var secondDie = Math.floor((Math.random() * 6) + 1);
+   console.log(firstDie, secondDie);
+};
