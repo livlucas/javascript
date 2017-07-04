@@ -13,13 +13,17 @@ $(document).ready(function() {
     hideGuessBox();
 
     $('#start-game').on('click', function() {
-        lives = 5;
-        wrongGuesses = [];
-        wordToBeGuessed();
-        printUnderscoreToPage();
-        updateWrongGuesses();
-        $('#guess-box').show();
+        initNewGame();
     });
+
+    function initNewGame() {
+        lives = 5;
+            wrongGuesses = [];
+            wordToBeGuessed();
+            printUnderscoreToPage();
+            updateWrongGuesses();
+            $('#guess-box').show();
+    }
 
     function printUnderscoreToPage() {
         var i,
@@ -47,7 +51,14 @@ $(document).ready(function() {
     }
 
     $('#js-guess').on('click', function() { 
+        var $inputValue;
+
         $letterGuessed = $('#guess-text').val();
-        guessLetter($letterGuessed);
+
+        $inputValue = $letterGuessed.trim().toLowerCase();
+        guessLetter($inputValue);
+
+        $('#guess-text').val('');
+        $('#guess-text').focus();
     });
 });
