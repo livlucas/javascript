@@ -5,7 +5,7 @@
     height: 32px;
     line-height: 30px;
     vertical-align: middle;
-    font-size: 30px;
+    font-size: 50px;
     margin-bottom: 0px;
 }
 #js-wrong-guesses {
@@ -16,6 +16,15 @@
     margin-bottom: 24px;
     color: #0000ff;
 }
+#js-wrong-letters {
+    height: 24px;
+    line-height: 24px;
+    vertical-align: middle;
+    font-size: 14px;
+    margin-bottom: 24px;
+    color: #0000ff;
+}
+
 </style>
   <head>
     <meta charset="utf-8">
@@ -47,12 +56,13 @@
 
     <div id="js-guessing"></div>
     <div id="js-wrong-guesses"></div>
+    <div id="js-wrong-letters"></div>
 
     <div id="guess-box" class="row">
         <div><!-- /.col-lg-6 -->
           <div class="col-sm-2">
             <div class="input-group">
-              <input type="text" class="form-control" id ="guess-text" placeholder="Guess a letter">
+              <input type="text" class="form-control" id ="guess-text" placeholder="Guess a letter" maxlength="1">
               <span class="input-group-btn">
                 <button id="js-guess" class="btn btn-default" type="button">Go!</button>
               </span>

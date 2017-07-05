@@ -6,7 +6,7 @@
 
 "use strict";
 
-var max_attempts = 10,
+var max_attempts = 8,
     lives = 5,
     //word to be guessed by player
     wordToGuess,
@@ -58,8 +58,8 @@ function guessLetter(letter) {
 }
 
 function isGameOver() {
-    if (wrongGuesses.length === max_attempts) {
-        lives -= 1;
+    if (wrongGuesses.length >= max_attempts) {
+        // lives -= 1;
         return true;
     }
     return false;
@@ -81,10 +81,11 @@ function isZeroLives() {
 function isGameWon() {
     var i;
 
-    for (i = 0; i < wordToGuess.length; i+= 1) {
-        if (guessedWord[i] !== undefined) {
-            return true;
+    for (i = 0; i < guessedWord.length; i+= 1) {
+        if (guessedWord[i] === undefined) {
+            return false;
         }
-        return false;
     }
+
+     return true;
 }

@@ -17,12 +17,19 @@ $(document).ready(function() {
     });
 
     function initNewGame() {
+        eraseGameContents();
         lives = 5;
-            wrongGuesses = [];
-            wordToBeGuessed();
-            printUnderscoreToPage();
-            updateWrongGuesses();
-            $('#guess-box').show();
+        wrongGuesses = [];
+        wordToBeGuessed();
+        printUnderscoreToPage();
+        printRemainingAttempts();
+        $('#guess-box').show();
+    }
+
+    function eraseGameContents() {
+        $('#js-guessing').text('');
+        $('#js-wrong-guesses').text('');
+        $('#js-wrong-letters').text('');
     }
 
     function printUnderscoreToPage() {
@@ -36,14 +43,52 @@ $(document).ready(function() {
         }
     }
 
-    function updateWrongGuesses() {
+    function updateUi() {
+        guessedWord.forEach(function(e) {
+            if(e === undefined) {
+                console.log('-')
+            }
+            if(e !== undefined) {
+                console.log(e);
+            }
+        });
+    }
+
+    function checkGameOver() {
+        var message;
+
+        if (!isGameOver() && !isGameWon()) return false;
+
+        if (isGameWon()) {
+            alert('You win! Your word was: ' + wordToGuess);
+            initNewGame();
+        }
+
+        if (isGameOver()) {
+            alert('You Lost. The game will restart with a new word.' +
+                'your word was: '  + wordToGuess);
+            initNewGame();
+        }
+
+        true;
+    }
+
+    function printRemainingAttempts() {
         var i,
             lengthOfWord;
 
         $('#js-wrong-guesses').text(
-            (max_attempts - wrongGuesses.length) + 
+            'you have ' + (max_attempts - wrongGuesses.length) + 
             ' out of ' +
-            max_attempts + ' chances');
+            max_attempts + ' attempts');
+    }
+
+    function printWrongLetters() {
+        if (wrongGuesses.length === 0) {
+            return;
+        } else {
+        $('#js-wrong-letters').text('wrong attempts: ' +  wrongGuesses.join('-'));
+        }
     }
 
     function hideGuessBox() {
@@ -60,5 +105,8 @@ $(document).ready(function() {
 
         $('#guess-text').val('');
         $('#guess-text').focus();
+        printRemainingAttempts();
+        printWrongLetters();
+        checkGameOver();
     });
 });
