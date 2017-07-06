@@ -89,3 +89,32 @@ function isGameWon() {
 
      return true;
 }
+
+function categoryList(list) {
+    var keys;
+
+    keys = Object.keys(list);
+
+    return keys;
+}
+
+function generateCategoryListStructure() {
+    var html, 
+        $categoryList;
+
+    html = '<li class = "list-item"><a href="#"></a></li>'
+
+    $categoryList = $(html);
+    return $categoryList;
+}
+
+function generateEachCategory(callback) {
+    callback.forEach(function (e) {
+        var $categoryList;
+
+        $categoryList = generateCategoryListStructure();
+
+        $('#menu-items').append($categoryList);
+        $('.list-item a').append(e);
+    });
+}

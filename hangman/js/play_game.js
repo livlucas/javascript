@@ -109,4 +109,8 @@ $(document).ready(function() {
         printWrongLetters();
         checkGameOver();
     });
+
+    $('#category-list').one('click', function() {
+        generateEachCategory(categoryList(words));
+    });
 });
