@@ -17,28 +17,28 @@ var max_attempts = 8,
     guessedWord;
 
 function wordToBeGuessed() {
-    var randomWord,
-        index,
-        category;
+    var randomWord;
 
-    randomWord = words[Math.floor(
-        Math.random() *words.length)].word; 
-    index = words.findIndex(w => w.word === randomWord);
-    category = words[index].category;
+    randomWord = words[categorySelected][
+        Math.floor(
+            Math.random() *words[categorySelected].length
+        )
+    ];
 
     wordToGuess = randomWord;
-    guessedWord = new Array(wordToGuess.length);
+    guessedWord = Array(wordToGuess.length).fill(undefined);
 
-    return {
-        word: randomWord,
-        category: category
-    };
+    return randomWord;
 }
 
 function guessLetter(letter) {
     var i,
         j,
         isRightGuess = false;
+
+    if (letter === "") {
+        return;
+    }
 
     for (j = 0; j < wordToGuess.length; j += 1) {
         if (letter === wrongGuesses[j]) {
@@ -88,33 +88,4 @@ function isGameWon() {
     }
 
      return true;
-}
-
-function categoryList(list) {
-    var keys;
-
-    keys = Object.keys(list);
-
-    return keys;
-}
-
-function generateCategoryListStructure() {
-    var html, 
-        $categoryList;
-
-    html = '<li class = "list-item"><a href="#"></a></li>'
-
-    $categoryList = $(html);
-    return $categoryList;
-}
-
-function generateEachCategory(callback) {
-    callback.forEach(function (e) {
-        var $categoryList;
-
-        $categoryList = generateCategoryListStructure();
-
-        $('#menu-items').append($categoryList);
-        $('.list-item a').append(e);
-    });
 }

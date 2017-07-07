@@ -1,32 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<style type="text/css">
-#js-guessing {
-    height: 32px;
-    line-height: 30px;
-    vertical-align: middle;
-    font-size: 50px;
-    margin-bottom: 14px;
-}
-#js-wrong-guesses {
-    height: 24px;
-    line-height: 24px;
-    vertical-align: middle;
-    font-size: 14px;
-    margin-bottom: 14px;
-    color: #0000ff;
-}
-#js-wrong-letters {
-    height: 24px;
-    line-height: 24px;
-    vertical-align: middle;
-    font-size: 14px;
-    margin-bottom: 24px;
-    color: #0000ff;
-}
-
-</style>
   <head>
+    <style type="text/css">
+    #js-guessing {
+        height: 32px;
+        line-height: 30px;
+        vertical-align: middle;
+        font-size: 50px;
+        margin-bottom: 14px;
+    }
+    #js-wrong-guesses {
+        height: 24px;
+        line-height: 24px;
+        vertical-align: middle;
+        font-size: 14px;
+        margin-bottom: 14px;
+        color: #0000ff;
+    }
+    #js-wrong-letters {
+        height: 24px;
+        line-height: 24px;
+        vertical-align: middle;
+        font-size: 14px;
+        margin-bottom: 24px;
+        color: #0000ff;
+    }
+
+    #main-container {
+      margin: 50px auto;
+    }
+
+    #main-container .jumbotron {
+      padding: 32px;
+    }
+
+    #main-container .jumbotron .{}
+
+    #game-panel {
+      display: none;
+    }
+    </style>
+  
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43,54 +57,72 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
+
   <body>
+    <nav class="navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Livia's Hangwoman</a>
+
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Game <span class="sr-only">(current)</span></a></li>
+
+            <li><a href="#">Records</a></li>
+
+            <li><a href="#">Rules</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <div id="main-container" class="container">
       <div class="jumbotron">
         <h2>HANGMAN</h2>
 
         <p>This is a hangman game. You have 5 lives. Use them wisely! Click on Learn More to read all rules.</p>
 
-        <p><a id ="start-game" class="btn btn-primary btn-lg" href="#" role="button">New Game</a></p>
-        <p><a id = "rules" class="btn btn-primary btn-lg" href="#" role="button">Learn More</a></p>
-        <p><a id = "records" class="btn btn-primary btn-lg" href="#" role="button">See Records</a></p>
+        <div id="game-menu">
+            <div class="btn-group">
+              <button type="button" 
+                      id="category-list" 
+                      class="btn btn-default dropdown-toggle" 
+                      data-toggle="dropdown" 
+                      aria-haspopup="true" 
+                      aria-expanded="false">
+                <span class="js-label">Pick a Category</span> <span class="caret"></span>
+              </button>
+              <ul id="menu-items" class="dropdown-menu">
+              </ul>
+            </div>
 
-        <form class="form-inline">
-          <div class="form-group">
-            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Type your name">
+            <a id ="start-game" class="btn btn-primary btn-lg" href="#" role="button">Start</a>
+        </div>
+
+        <div id="game-panel">
+          <div id="js-guessing"></div>
+
+          <div id="guess-box" class="form-inline">
+              <input type="text"
+                     id ="guess-text" 
+                     style="width: 80px"
+                     class="form-control"
+                     placeholder="letter..."
+                     maxlength="1">
+
+              <button id="js-guess" class="btn btn-primary" type="button">Go!</button>
           </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-        </form>
 
-        <div class="btn-group">
-          <button type="button" id="category-list" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Pick a Category <span class="caret"></span>
-          </button>
-          <ul id="menu-items"class="dropdown-menu">
-          </ul>
-        </div>
+          <div id="js-wrong-guesses"></div>
 
-        <div id="js-guessing"></div>
-        <div id="js-wrong-guesses"></div>
-        <div id="js-wrong-letters"></div>
-
-        <div id="guess-box" class="row">
-          <div><!-- /.col-lg-6 -->
-            <div class="col-sm-2">
-              <div class="input-group">
-                <input type="text" class="form-control" id ="guess-text" placeholder="Guess a letter" maxlength="1">
-                <span class="input-group-btn">
-                  <button id="js-guess" class="btn btn-default" type="button">Go!</button>
-                </span>
-              </div><!-- /input-group -->
-            </div><!-- /.col-lg-6 -->
-          </div><!-- /.row -->
-        </div>
-
+          <div id="js-wrong-letters"></div>
+      </div>
+    </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed   -->
     <script src="css/js/bootstrap.min.js"></script>
     <script src="js/database.js" type="text/javascript" charset="utf-8" async defer></script>
-    <script src="js/play_game.js" type="text/javascript" charset="utf-8" async defer></script>
+    <script src="js/run_game.js" type="text/javascript" charset="utf-8" async defer></script>
     <script src="js/app.js" type="text/javascript" charset="utf-8" async defer></script>
   </body>
 </html>
