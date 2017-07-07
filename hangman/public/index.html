@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style type="text/css">
+        #js-guessing {
+                height: 32px;
+                line-height: 30px;
+                vertical-align: middle;
+                font-size: 50px;
+                margin-bottom: 14px;
+        }
+        #js-wrong-guesses {
+                height: 24px;
+                line-height: 24px;
+                vertical-align: middle;
+                font-size: 14px;
+                margin-bottom: 14px;
+                color: #595959;
+        }
+        #js-wrong-letters {
+                height: 24px;
+                line-height: 24px;
+                vertical-align: middle;
+                font-size: 14px;
+                margin-bottom: 24px;
+                color: #0000ff;
+        }
+
+        #main-container {
+            margin: 50px auto;
+        }
+
+        #main-container .jumbotron {
+            padding: 32px;
+        }
+
+        #game-panel {
+            display: none;
+        }
+
+        #game-over-container {
+            display: none;
+        }
+
+        #score {
+            height: 24px;
+            line-height: 24px;
+            vertical-align: middle;
+            font-size: 14px;
+            margin-bottom: 14px;
+            color: #595959;
+        }
+
+        #daily-phrase p {
+            font-size: 14px;
+        }
+        </style>
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <link rel="icon" href="images/hangman-icon.png">
+    
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Hangman - The Winning Streak Game</title>
+    </head>
+
+    <body>
+        <nav class="navbar-fixed-top navbar-inverse">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Livia's Hangman</a>
+
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Game <span class="sr-only">(current)</span></a></li>
+
+                        <li><a href="#">Records</a></li>
+
+                        <li><a href="#">Words Database</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div id="main-container" class="container">
+            <div class="jumbotron">
+                <h2>HANGMAN <img src="images/hangman.png" height="42" width="42"></h2>
+
+                <p>This is the Hangman Winning Streak game. You will accumulate points while you win. Have fun!</p>
+
+                <div id="daily-phrase">
+                    <p> Quote of the day: "Our greatest weakness lies on giving up. The most certain way to improve is to keep trying."</p>
+                </div>
+
+                <div id="game-menu">
+                    <div class="btn-group">
+                        <button type="button" 
+                                id="category-list" 
+                                class="btn btn-default dropdown-toggle" 
+                                data-toggle="dropdown" 
+                                aria-haspopup="true" 
+                                aria-expanded="false">
+                            <span class="js-label">Pick a Category</span> <span class="caret"></span>
+                        </button>
+                        <ul id="menu-items" class="dropdown-menu">
+                        </ul>
+                    </div>
+
+                    <a id ="start-game" class="btn btn-primary btn-lg" href="#" role="button">Start</a>
+                </div>
+
+                <div id="game-panel">
+                    <div id="js-guessing"></div>
+
+                    <div id="guess-box" class="form-inline">
+                        <input type="text"
+                               id ="guess-text" 
+                               style="width: 80px"
+                               class="form-control"
+                               placeholder="letter..."
+                               maxlength="1">
+
+                        <button id="js-guess" class="btn btn-primary" type="button">Go!</button>
+                    </div>
+
+                    <div id="score"></div>
+
+                    <div id="js-wrong-guesses"></div>
+
+                    <div id="js-wrong-letters"></div>
+                </div>
+
+                <div id="game-over-container">
+                    <p>You lost! Your score is: <span class="score-display"></span></p>
+
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="exampleInputName2" placeholder="Type your name">
+                        </div>
+                        <button type="submit" class="btn btn-default">Send</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3rd party code -->
+        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-database.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-messaging.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+
+        <!-- App code -->
+        <script type="text/javascript">
+            //initializing namespace
+            window.HANGMAN = {};
+        </script>
+        <script src="js/database.js" type="text/javascript" charset="utf-8" async defer></script>
+        <script src="js/words.js" type="text/javascript" charset="utf-8" async defer></script>
+        <script src="js/game-engine.js" type="text/javascript" charset="utf-8" async defer></script>
+        <script src="js/ui.js" type="text/javascript" charset="utf-8" async defer></script>
+    </body>
+</html>
