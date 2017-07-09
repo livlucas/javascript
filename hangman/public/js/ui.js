@@ -28,7 +28,6 @@ HANGMAN.ui = {
                 && self.categorySelected !== '') {
                 self.initNewGame(words);
             }
-            $('.js-selected-category').text(self.categorySelected);
         });
 
         $('#guess-text').on('keyup', function (e) {
@@ -57,13 +56,19 @@ HANGMAN.ui = {
         });
 
         $('#submit-score').on('click', function () {
-            var self = this;
-
-            self.database.saveScore(getScore());
+            self.database.saveScore(self.getNameAndScore());
+            self.initNewGame(words);
         });
     },
 
-    getScore: function () {
+    renderWinMessage: function () {
+        $('#win-message').append('You got it! : ) Your word was '
+                                + this.game.wordToGuess 
+                                + '! '
+                                + 'Keep playing!');
+    },
+
+    getNameAndScore: function () {
         var nameValue,
             score;
 
@@ -76,7 +81,7 @@ HANGMAN.ui = {
             return {
                 name: nameValue,
                 score: score
-            }
+            };
     },
 
     //gets all keys of list
@@ -150,6 +155,7 @@ HANGMAN.ui = {
         this.game.start(words[this.categorySelected]);
 
         //ui
+        $('#win-message').hide();
         this.showGamePanel();
         this.updateGamePanel();
     },
@@ -218,13 +224,10 @@ HANGMAN.ui = {
 
         if (this.game.isGameWon()) {
             this.game.addScore(10);
-
-            alert('You got it! Your word was: ' +
-                this.game.wordToGuess + 
-                ' Keep playing!');
-
             this.updateScore();
-            this.initNewGame(words);
+
+            this.renderWinMessage();
+            window.setTimeout(this.initNewGame.bind(this), 3000);
         }
 
         if (this.game.isGameOver()) {
