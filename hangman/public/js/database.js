@@ -50,5 +50,29 @@ HANGMAN.database = {
 
             callback(words);
         });
+    },
+
+    _getScoresRef: function () {
+        return this.db.ref('/scores');
+    },
+
+    saveScore: function (score) {
+        this._getScoresRef()
+            .push(score);
+    },
+
+    getTopScores: function () {
+        this._getScoresRef('/scores')
+          .orderByChild('score') //ordering by the score property
+          .limitToLast(5) //getting last 15 results
+          .once('value')
+          .then(function (snapshot) {
+            //iterate the snapshot
+            snapshot.forEach(function (childss) {
+                var scoreRecord = childss.val();
+                console.log(scoreRecord);
+            });
+        });
     }
+
 };

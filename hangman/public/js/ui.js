@@ -6,217 +6,235 @@
 
 "use strict";
 
-var categorySelected;
+HANGMAN.ui = {
+    game: HANGMAN.game,
 
-function initUi(words) {
-    renderCategoryDropdown(words);
+    database: HANGMAN.database,
 
-    $('#start-game').attr('disabled', true);
+    categorySelected: '',
 
-    bindEvents(words);
-}
+    init: function (words) {
+        this.renderCategoryDropdown(words);
 
-function bindEvents(words) {
-    $('#start-game').on('click', function() {
-        if (categorySelected !== undefined 
-            && categorySelected !== '') {
-            initNewGame(words);
-        }
-    });
+        $('#start-game').attr('disabled', true);
 
-    $('#guess-text').on('keyup', function (e) {
-        var code = e.keyCode || e.which;
+        this.bindEvents(words);
+    },
 
-        if (code === 13) {
-            makeAGuess(words);
-        }
+    bindEvents: function (words) {
+        var self = this;
+        $('#start-game').on('click', function() {
+            if (self.categorySelected !== undefined 
+                && self.categorySelected !== '') {
+                self.initNewGame(words);
+            }
+            $('.js-selected-category').text(self.categorySelected);
+        });
 
-        $('#guess-text').select();
-    });
+        $('#guess-text').on('keyup', function (e) {
+            var code = e.keyCode || e.which;
 
-    $('#js-guess').on('click', function () {
-        makeAGuess(words);
-    });
+            if (code === 13) {
+                self.makeAGuess(words);
+            }
 
-    //gets value of selected category from dropdown list
-    $(document).on('click', '.dropdown-menu li a', function () {
-        var selectedCategory;
+            $('#guess-text').select();
+        });
 
-        selectedCategory = $(this).text();
-        //setting value of category to global variable
-        categorySelected = selectedCategory;
-        $('#category-list .js-label').text(categorySelected);
-        $('#start-game').attr('disabled', false);
-    });
+        $('#js-guess').on('click', function () {
+            self.makeAGuess(words);
+        });
 
-    //submit score form
-}
+        //gets value of selected category from dropdown list
+        $(document).on('click', '.dropdown-menu li a', function () {
+            var selectedCategory;
 
-//iterates thru object to get a list of categories
-function categoryList(list) {
-    var keys;
+            selectedCategory = $(this).text();
+            //setting value of category to global variable
+            self.categorySelected = selectedCategory;
+            $('#category-list .js-label').text(self.categorySelected);
+            $('#start-game').attr('disabled', false);
+        });
 
-    keys = Object.keys(list);
+        $('#records').on('click', function () {
 
-    return keys;
-}
+        })
+    },
 
-//generates html for categories list
-function generateCategoryListStructure() {
-    var html, 
+    //gets all keys of list
+    categoryList: function (list) {
+        var keys;
+
+        //gets all keys of list
+        keys = Object.keys(list);
+
+        return keys;
+    },
+
+    generateCategoryListStructure: function () {
+        var html, 
         $categoryList;
 
-    html = '<li class = "list-item"><a href="#"></a></li>'
+        html = '<li class = "list-item"><a href="#"></a></li>'
 
-    $categoryList = $(html);
-    return $categoryList;
-}
+        $categoryList = $(html);
+        return $categoryList;
+    },
 
-//iterates thru list of categories and appends it to DOM structure
-function renderCategoryOptions(categories) {
-    categories.forEach(function (e) {
-        var $categoryList;
+    renderCategoryOptions: function (categories) {
+        var self = this;
 
-        $categoryList = generateCategoryListStructure();
+        categories.forEach(function (e) {
+            var $categoryList;
 
-        $('#menu-items').append($categoryList);
-        $categoryList.find('a').append(e);
-    });
-}
+            $categoryList = self.generateCategoryListStructure();
 
-function renderCategoryDropdown(words) {
-    var width = {},
-        categories = categoryList(words);
+            $('#menu-items').append($categoryList);
+            $categoryList.find('a').append(e);
+        });
+    },
+
+    renderCategoryDropdown: function (words) {
+        var width = {},
+        categories = this.categoryList(words);
     
-    renderCategoryOptions(categories);
+        this.renderCategoryOptions(categories);
 
-    //calculate max width
-    width.select = $('#category-list').width();
-    width.list = $('#category-list ul').css({
-        visibility: 'hidden', 
-        display: 'block'
-    }).width();
+        //calculate max width
+        width.select = $('#category-list').width();
+        width.list = $('#category-list ul').css({
+            visibility: 'hidden', 
+            display: 'block'
+        }).width();
 
-    $('#category-list ul').removeAttr('style');
+        $('#category-list ul').removeAttr('style');
 
-    $('#category-list').width(Math.max(width.select, width.list));
-}
+        $('#category-list').width(Math.max(width.select, width.list));
+    },
 
-function showGamePanel() {
-    $('#game-menu').slideUp();
-    $('#game-panel').slideDown();
-    $('#guess-text').focus();
-}
+    showGamePanel: function () {
+        $('.js-page').slideUp();
+        $('#game-panel').slideDown();
+        $('#guess-text').focus();
+    },
 
-function showGameMenu() {
-    $('#game-panel').slideUp();
-    $('#game-menu').slideDown();
-}
+    showGameMenu: function () {
+        $('.js-page').slideUp();
+        $('#game-menu').slideDown();
+    },
 
-function updateUi() {
-    var state;
+    showGameOver: function () {
+        $('.js-page').slideUp();
+        $('#game-over-container').slideDown();
+    },
 
-    state = guessedWord
+    initNewGame: function (words) {
+        this.game.start(words[this.categorySelected]);
+
+        //ui
+        this.showGamePanel();
+        this.updateGamePanel();
+    },
+
+    updateGamePanel: function () {
+        var state;
+
+        state = this.game
+        .guessedWord
         .map(function(item) { return item === undefined ? '_' : item;})
         .join(' '); 
 
-    $('#js-guessing').text(state);
-}
+        $('#js-guessing').text(state);
 
-function initNewGame(words) {
-    resetGamePanels();
-    wrongGuesses = [];
-    raffleWord(words);
-    printUnderscoreToPage();
-    updateRemainingAttempts();
-    showGamePanel();
-    updateScore();
-}
+        this.updateRemainingAttempts();
+        this.updateScore();
+        this.updateWrongLetters();
+    },
 
-function resetGamePanels() {
-    $('#js-guessing').text('');
-    $('#js-wrong-guesses').text('');
-    $('#js-wrong-letters').text('');
-}
+    updateScore: function () {
+        $('#score').text('your score is: ' + this.game.score);
+    },
 
-function printUnderscoreToPage() {
-    var i,
-        lengthOfWord;
+    updateRemainingAttempts: function () {
+        var i,
+            lengthOfWord;
 
-        lengthOfWord = guessedWord.length;
+        $('#js-wrong-guesses').text(
+            'you have ' 
+            + this.game.getRemainingAttempts() 
+            + ' out of ' 
+            + this.game.maxAttempts 
+            + ' attempts'
+        );
+    },
 
-    for (i = 0; i < lengthOfWord; i += 1) {
-        $('#js-guessing').append('_ ');
+    updateWrongLetters: function () {
+        if (this.game.wrongGuesses.length === 0) {
+            $('#js-wrong-letters').text('');
+            return;
+        }
+
+        $('#js-wrong-letters').text('wrong attempts: ' +  this.game.wrongGuesses.join('-'));
+    },
+
+    makeAGuess: function (words) { 
+        var letterGuessed;
+
+        letterGuessed = $('#guess-text').val();
+        letterGuessed = letterGuessed.trim().toLowerCase();
+
+        this.game.guessLetter(letterGuessed);
+
+        $('#guess-text').val('');
+        $('#guess-text').focus();
+
+        this.updateGamePanel();
+        this.checkGameOver(words);
+    },
+
+    //checks and manipulates DOM when game is over or game won!
+    checkGameOver: function (words) {
+        var message,
+            currentScore;
+
+        if (!this.game.isGameOver() && !this.game.isGameWon()) return false;
+
+        if (this.game.isGameWon()) {
+            this.game.addScore(10);
+
+            alert('You got it! Your word was: ' +
+                this.game.wordToGuess + 
+                ' Keep playing!');
+
+            this.updateScore();
+            this.initNewGame(words);
+        }
+
+        if (this.game.isGameOver()) {
+            //variable to save final score to db safely
+            if(this.game.score === 0) {
+                $('#game-over-container p').text('You lose! Click continue to start a new game!');
+                $('#name-form').hide();
+                //hide game over panel
+                //show do contiue button
+            }
+            currentScore = this.game.score;
+            this.game.resetScore();
+
+            $('#game-over-container .score-display').text('You lose! Your score was: ' + currentScore);
+            this.showGameOver();
+            $('#continue-game').hide();
+        }
+    },
+
+    updateRecords: function (records) {
+
+        console.log(records);
     }
-}
 
-function checkGameOver(words) {
-    var message,
-        currentScore;
+};
 
-    if (!isGameOver() && !isGameWon()) return false;
-
-    if (isGameWon()) {
-        score += 10;
-        alert('You got it! Your word was: ' +
-            wordToGuess + 
-            ' Keep playing!');
-        console.log(score);
-        updateScore();
-        initNewGame(words);
-    }
-
-    if (isGameOver()) {
-        //variable to save final score to db safely
-        currentScore = score;
-        $('#game-over-container .score-display').text(currentScore);
-
-        $('#game-panel').slideUp();
-        $('#game-over-container').slideDown();
-        score = 0;
-    }
-}
-
-function updateScore() {
-    $('#score').text('your score is: ' + score);
-}
-
-function updateRemainingAttempts() {
-    var i,
-        lengthOfWord;
-
-    $('#js-wrong-guesses').text(
-        'you have ' + (max_attempts - wrongGuesses.length) + 
-        ' out of ' +
-        max_attempts + ' attempts');
-}
-
-//inserts wrong guesses to DOM
-function printWrongLetters() {
-    if (wrongGuesses.length === 0) {
-        return;
-    } else {
-    $('#js-wrong-letters').text('wrong attempts: ' +  wrongGuesses.join('-'));
-    }
-}
-
-function makeAGuess(words) { 
-    var $inputValue,
-        $letterGuessed;
-
-    $letterGuessed = $('#guess-text').val();
-
-    $inputValue = $letterGuessed.trim().toLowerCase();
-    guessLetter($inputValue);
-
-    $('#guess-text').val('');
-    $('#guess-text').focus();
-    updateUi();
-    updateRemainingAttempts();
-    printWrongLetters();
-    checkGameOver(words);
-}
-
+//when document ready
 $(function() {
     var db;
 
@@ -224,5 +242,12 @@ $(function() {
 
     db.init();
 
-    db.readWords(initUi);
+    db.readWords(function (words) {
+        HANGMAN.ui.init(words);
+    });
+
+    db.getTopScores(function (records) {
+        HANGMAN.ui.updateRecords(records);
+    })
 });
+

@@ -51,9 +51,22 @@
             color: #595959;
         }
 
-        #daily-phrase p {
-            font-size: 14px;
+        #daily-word {
+            background: white;
+            border: 1px solid white;
+            padding: 16px;
         }
+        #daily-word span {
+            color: #aaa;
+        }
+        #daily-word p {
+            margin-bottom: 0;
+        }
+
+        #continue-game {
+            padding: 16px;
+        }
+
         </style>
         <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -74,9 +87,9 @@
                     <ul class="nav navbar-nav">
                         <li class="active"><a href="#">Game <span class="sr-only">(current)</span></a></li>
 
-                        <li><a href="#">Records</a></li>
+                        <li id="records"><a href="#">Records</a></li>
 
-                        <li><a href="#">Words Database</a></li>
+                        <li id="database"><a href="#">Words Database</a></li>
                     </ul>
                 </div>
             </div>
@@ -84,15 +97,32 @@
         
         <div id="main-container" class="container">
             <div class="jumbotron">
-                <h2>HANGMAN <img src="images/hangman.png" height="42" width="42"></h2>
+                <div id="game-menu" class="js-page">
+                    <h2>HANGMAN <img src="images/hangman.png" height="42" width="42"></h2>
 
-                <p>This is the Hangman Winning Streak game. You will accumulate points while you win. Have fun!</p>
+                    <div id="daily-word">
+                        <span class="text-uppercase small">Daily Word</span>
 
-                <div id="daily-phrase">
-                    <p> Quote of the day: "Our greatest weakness lies on giving up. The most certain way to improve is to keep trying."</p>
-                </div>
+                        <p>Disrupt: "meaning goes here"</p>
+                    </div>
 
-                <div id="game-menu">
+                    <div>
+                        <h4>Rules </h4>
+
+                        <ul>
+                            <li>This is the Hangman Winning Streak game.</li>
+                            <li>Pick a Category of words and click "Start" so that a word can be sorted</li>
+                            <li>Guess one letter at a time by typing letter and pressing "Go!" </li>
+                            <li>You have 6 attempts to guess the right word.</li>
+                            <li>You will accumulate 10 points per right word guessed while you keep winning.</li>
+                            <li> If you type a correct letter, it will be displayed in the console.</li>
+                            <li>The console will also display how many attempts you still have and your wrong attempts.</li>
+                            <li>If you lose, your score goes back to zero.</li>
+                            <li>When you lose and if your score is > zero, you can type your name to save your score.</li>
+                            <li>The 15 top scorers will be displayed in the menu bar tab "Records."</li>
+                        </ul>
+                   </div>
+
                     <div class="btn-group">
                         <button type="button" 
                                 id="category-list" 
@@ -109,7 +139,12 @@
                     <a id ="start-game" class="btn btn-primary btn-lg" href="#" role="button">Start</a>
                 </div>
 
-                <div id="game-panel">
+                <div id="game-panel" class="js-page">
+                    <div class="js-hangman-state">
+                        <img src="images/hangman.png" height="42" width="42">
+                        Category: <span class="js-selected-category"></span>
+                    </div>
+
                     <div id="js-guessing"></div>
 
                     <div id="guess-box" class="form-inline">
@@ -130,16 +165,43 @@
                     <div id="js-wrong-letters"></div>
                 </div>
 
-                <div id="game-over-container">
-                    <p>You lost! Your score is: <span class="score-display"></span></p>
+                <div id="game-over-container" class="js-page">
+                    <p> <span class="score-display"></span></p>
 
-                    <form class="form-inline">
+                    <form class="form-inline" id="name-form">
                         <div class="form-group">
                             <input type="text" class="form-control" id="exampleInputName2" placeholder="Type your name">
                         </div>
                         <button type="submit" class="btn btn-default">Send</button>
                     </form>
+
+                    <div class="form-group" id="continue-game"> 
+                        <button type="button" class="btn btn-primary">Continue</button>
+                    </div>
                 </div>
+
+                <div class="table-responsive">
+                  <table class="table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Score</th>
+                    </tr>
+                    <tr>
+                        <td>Livia</td>
+                        <td>500</td>
+                    </tr>
+                    <tr>
+                        <td>Lorena</td>
+                        <td>200</td>
+                    </tr>
+                    <tr>
+                        <td>Henrique</td>
+                        <td>100</td>
+                    </tr>
+                  </table>
+                </div>
+
+
             </div>
         </div>
 

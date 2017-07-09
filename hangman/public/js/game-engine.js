@@ -6,72 +6,91 @@
 
 "use strict";
 
-var max_attempts = 1,
-    //word to be guessed by player
-    wordToGuess,
-    //array containing every wrong guess
-    wrongGuesses = [],
-    //array containing number of letters of wordToGuess
-    //every right letter is to be inserted here
-    guessedWord,
-    score = 0;
+HANGMAN.game = {
+    maxAttempts: 6,
+    allowedCharacters: ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
+    wordToGuess: '',
+    guessedWord: '',
+    wrongGuesses: [],
+    score: 0,
 
-function raffleWord(words) {
-    var randomWord;
+    start: function (categoryWords) {
+        this.wrongGuesses = [];
+        this.wordToGuess = '';
+        this.guessedWord = '';
 
-    randomWord = words[categorySelected][
-        Math.floor(
-            Math.random() *words[categorySelected].length
-        )
-    ];
+        this.raffleWord(categoryWords);
+    },
 
-    wordToGuess = randomWord;
-    guessedWord = Array(wordToGuess.length).fill(undefined);
+    addScore: function (points) {
+        this.score += points;
+    },
 
-    return randomWord;
-}
+    resetScore: function () {
+        this.score = 0;
+    },
 
-function guessLetter(letter) {
-    var i,
-        j,
-        isRightGuess = false;
+    getRemainingAttempts: function () {
+        return this.maxAttempts - this.wrongGuesses.length;
+    },
 
-    if (letter === "") {
-        return;
-    }
+    raffleWord: function (categoryWords) {
+        var randomWord;
 
-    for (j = 0; j < wordToGuess.length; j += 1) {
-        if (letter === wrongGuesses[j]) {
+        randomWord = categoryWords[
+            Math.floor(
+                Math.random() * categoryWords.length
+            )
+        ];
+
+        this.wordToGuess = randomWord;
+        this.guessedWord = Array(this.wordToGuess.length).fill(undefined);
+
+        return randomWord;
+    },
+
+    guessLetter: function (letter) {
+        var i,
+            isRightGuess = false;
+
+        if ((letter === "") 
+          || (this.allowedCharacters.indexOf(letter) === -1)) {
             return;
         }
-    }
 
-    for (i = 0; i < wordToGuess.length; i += 1) {
-        if (letter === wordToGuess[i]) {
-            guessedWord[i] = wordToGuess[i];
-            isRightGuess = true;
+        //avoiding repeated wrong letters
+        for (i = 0; i < this.wrongGuesses.length; i += 1) {
+            if (letter === this.wrongGuesses[i]) {
+                return;
+            }
         }
-    }
-    if (!isRightGuess) {
-        wrongGuesses[wrongGuesses.length] = letter;
-    }
-}
 
-function isGameOver() {
-    if (wrongGuesses.length >= max_attempts) {
-        return true;
-    }
-    return false;
-}
-
-function isGameWon() {
-    var i;
-
-    for (i = 0; i < guessedWord.length; i+= 1) {
-        if (guessedWord[i] === undefined) {
-            return false;
+        //finding all ocurrences of the guessed letter
+        for (i = 0; i < this.wordToGuess.length; i += 1) {
+            if (letter === this.wordToGuess[i]) {
+                this.guessedWord[i] = letter;
+                isRightGuess = true;
+            }
         }
-    }
 
-     return true;
-}
+        if (isRightGuess) return;
+        
+        this.wrongGuesses.push(letter);
+    },
+
+    isGameOver: function () {
+        return (this.wrongGuesses.length >= this.maxAttempts);
+    },
+
+    isGameWon: function () {
+        var i;
+
+        for (i = 0; i < this.guessedWord.length; i += 1) {
+            if (this.guessedWord[i] === undefined) {
+                return false;
+            }
+        }
+
+         return true;
+    }
+};
