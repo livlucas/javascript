@@ -111,14 +111,14 @@
 
                         <ul>
                             <li>This is the Hangman Winning Streak game.</li>
-                            <li>Pick a Category of words and click "Start" so that a word can be sorted</li>
+                            <li>Pick a Category of words and click "Start."</li>
                             <li>Guess one letter at a time by typing letter and pressing "Go!" </li>
                             <li>You have 6 attempts to guess the right word.</li>
-                            <li>You will accumulate 10 points per right word guessed while you keep winning.</li>
-                            <li> If you type a correct letter, it will be displayed in the console.</li>
-                            <li>The console will also display how many attempts you still have and your wrong attempts.</li>
-                            <li>If you lose, your score goes back to zero.</li>
-                            <li>When you lose and if your score is > zero, you can type your name to save your score.</li>
+                            <li>You will accumulate 10 points per correct answer.</li>
+                            <li> If you type a correct letter, it will be displayed.</li>
+                            <li>Remaining attempts will also be displayed.</li>
+                            <li>If you can't complete the word, your score will be reset to 0.</li>
+                            <li>If you can't complete the word and you've scored points, type your name to save your score.</li>
                             <li>The 15 top scorers will be displayed in the menu bar tab "Records."</li>
                         </ul>
                    </div>
@@ -172,7 +172,7 @@
                         <div class="form-group">
                             <input type="text" class="form-control" id="exampleInputName2" placeholder="Type your name">
                         </div>
-                        <button type="submit" class="btn btn-default">Send</button>
+                        <button type="submit" id="submit-score" class="btn btn-default">Send</button>
                     </form>
 
                     <div class="form-group" id="continue-game"> 

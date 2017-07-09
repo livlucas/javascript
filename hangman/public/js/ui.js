@@ -56,9 +56,27 @@ HANGMAN.ui = {
             $('#start-game').attr('disabled', false);
         });
 
-        $('#records').on('click', function () {
+        $('#submit-score').on('click', function () {
+            var self = this;
 
-        })
+            self.database.saveScore(getScore());
+        });
+    },
+
+    getScore: function () {
+        var nameValue,
+            score;
+
+            score = this.game.currentScore;
+
+            nameValue = $('#exampleInputName2').val();
+            console.log(nameValue);
+            console.log(score);
+
+            return {
+                name: nameValue,
+                score: score
+            }
     },
 
     //gets all keys of list
@@ -194,8 +212,7 @@ HANGMAN.ui = {
 
     //checks and manipulates DOM when game is over or game won!
     checkGameOver: function (words) {
-        var message,
-            currentScore;
+        var message;
 
         if (!this.game.isGameOver() && !this.game.isGameWon()) return false;
 
@@ -211,28 +228,28 @@ HANGMAN.ui = {
         }
 
         if (this.game.isGameOver()) {
-            //variable to save final score to db safely
             if(this.game.score === 0) {
                 $('#game-over-container p').text('You lose! Click continue to start a new game!');
                 $('#name-form').hide();
                 //hide game over panel
-                //show do contiue button
+                //show contiue button
             }
-            currentScore = this.game.score;
+            this.game.currentScore = this.game.score;
             this.game.resetScore();
 
-            $('#game-over-container .score-display').text('You lose! Your score was: ' + currentScore);
+            $('#game-over-container .score-display').text('You lose! Your score was: ' + this.game.currentScore);
             this.showGameOver();
             $('#continue-game').hide();
         }
     },
 
     updateRecords: function (records) {
-
         console.log(records);
     }
 
 };
+
+//iterar, passar pra lista, chamar callback.
 
 //when document ready
 $(function() {

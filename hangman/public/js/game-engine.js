@@ -12,6 +12,7 @@ HANGMAN.game = {
     wordToGuess: '',
     guessedWord: '',
     wrongGuesses: [],
+    currentScore: 0,
     score: 0,
 
     start: function (categoryWords) {

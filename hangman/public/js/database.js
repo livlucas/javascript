@@ -74,5 +74,5 @@ HANGMAN.database = {
             });
         });
     }
-
+    
 };
