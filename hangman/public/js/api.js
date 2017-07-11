@@ -1,23 +1,40 @@
 'use strict';
 //this code gets us the request and the data in a JSON object.
 
+//wordnik
+HANGMAN.api = {
+    // url: 'http://api.wordnik.com:80/v4/words.json/wordOfTheDay',
+    // key: 'a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5',
+    url: 'https://wordsapiv1.p.mashape.com/words/',
+    key: 'VC0rOnrCjkmshvCFed7sv8BaWm1Wp1C0Y5Gjsng7Z2dxt19byj',
 
-var eventFul = {
-    url: 'http://api.eventful.com/json/events/search',
-    key: 'F6Jk5KpSMrxV8xnb'
-}
+    wordOfTheDayRequest: function (callback) {
+        var self = this;
+        $.ajax({
+            method: 'GET',
+            datatype: 'json',
+            url: this.url,
+            headers: {
+                'x-mashape-key': this.key
+            },
+            data: {
+                'random': 'true'
+            },
+            success: function (randomResult) {
+                if (randomResult.results
+                    && randomResult.results.length) {
+                    callback({
+                        word: randomResult.word,
+                        definition: randomResult.results[0].definition
+                    });
+                    return;
+                }
 
-$.ajax({
-    method: 'GET',
-    url: eventFul.url,
-    data: {
-        app_key: eventFul.key,
-        //location: 'San+Francisco'
+                self.wordOfTheDayRequest(callback);
+            }
+        });
     },
-    success: function (response) {
-        console.log(response);
-    }
-});
+};
 
 
 

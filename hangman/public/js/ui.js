@@ -7,7 +7,13 @@
 "use strict";
 
 HANGMAN.ui = {
+    delayToNextWord: 3 * 1000,
+
+    points: 10,
+
     game: HANGMAN.game,
+
+    api: HANGMAN.api,
 
     database: HANGMAN.database,
 
@@ -16,7 +22,7 @@ HANGMAN.ui = {
     init: function (words) {
         this.renderCategoryDropdown(words);
 
-        $('#start-game').attr('disabled', true);
+        this.showGameMenu();
 
         this.bindEvents(words);
     },
@@ -28,6 +34,7 @@ HANGMAN.ui = {
                 && self.categorySelected !== '') {
                 self.initNewGame(words);
             }
+            self.renderSelectedCategory();
         });
 
         $('#guess-text').on('keyup', function (e) {
@@ -45,8 +52,10 @@ HANGMAN.ui = {
         });
 
         //gets value of selected category from dropdown list
-        $(document).on('click', '.dropdown-menu li a', function () {
+        $(document).on('click', '.dropdown-menu li a', function (e) {
             var selectedCategory;
+
+            e.preventDefault();
 
             selectedCategory = $(this).text();
             //setting value of category to global variable
@@ -59,13 +68,28 @@ HANGMAN.ui = {
             self.database.saveScore(self.getNameAndScore());
             self.initNewGame(words);
         });
+
+        $('#records').on('click', function () {
+            self.showRecordTable();
+        });
+
+        $('#game').on('click', function () {
+            self.showGameMenu();
+            $('#record-table').slideUp();
+        });
+
+        $('#continue-game').on('click', function () {
+            self.showGameMenu();
+        });
+    },
+
+    renderSelectedCategory: function () {
+        $('.js-selected-category').text(this.categorySelected);
     },
 
     renderWinMessage: function () {
-        $('#win-message').append('You got it! : ) Your word was '
-                                + this.game.wordToGuess 
-                                + '! '
-                                + 'Keep playing!');
+        $('#win-message .js-guessed-word').text(this.game.wordToGuess);
+        $('#win-message .js-current-score').text(this.game.score);
     },
 
     getNameAndScore: function () {
@@ -104,6 +128,32 @@ HANGMAN.ui = {
         return $categoryList;
     },
 
+    generateRecordTableRow: function (record) {
+        var html,
+            $recordTable;
+
+        html = '<tr class ="record-row">'
+                + '<td class="name"></td>'
+                + '<td class="score"></td>'
+            + '</tr>';
+
+        $recordTable = $(html);
+        $recordTable.find('.name').append(record.name);
+        $recordTable.find('.score').append(record.score);
+
+        return $recordTable;
+    },
+
+    renderRecordTable: function (records) {
+        records.forEach(function (e) {
+            var $recordList;
+
+            $recordList = HANGMAN.ui.generateRecordTableRow(e);
+
+            $('.table').append($recordList);
+        });
+    },
+
     renderCategoryOptions: function (categories) {
         var self = this;
 
@@ -135,6 +185,7 @@ HANGMAN.ui = {
         $('#category-list').width(Math.max(width.select, width.list));
     },
 
+    //PAGES
     showGamePanel: function () {
         $('.js-page').slideUp();
         $('#game-panel').slideDown();
@@ -142,22 +193,39 @@ HANGMAN.ui = {
     },
 
     showGameMenu: function () {
-        $('.js-page').slideUp();
-        $('#game-menu').slideDown();
+        $('#category-list .js-label').text('Pick a category...')
+        $('#start-game').attr('disabled', true);
+        $('.js-page:not(#game-menu)').slideUp();
+
+        if (!$('#game-menu').is(':visible')) {
+            $('#game-menu').slideDown();
+        }
     },
 
-    showGameOver: function () {
+    showGameOver: function () {        
         $('.js-page').slideUp();
         $('#game-over-container').slideDown();
     },
 
+    showWinMessage: function () {
+        this.renderWinMessage();
+        $('.js-page').slideUp();
+        $('#win-message').slideDown();
+    },
+
+    showRecordTable: function () {
+        $('.js-page').slideUp();
+        $('#record-table').slideDown();
+    },
+
+    //GAME CONTROLS
     initNewGame: function (words) {
         this.game.start(words[this.categorySelected]);
 
         //ui
-        $('#win-message').hide();
         this.showGamePanel();
         this.updateGamePanel();
+        //$('#win-message').slideDown();
     },
 
     updateGamePanel: function () {
@@ -223,11 +291,12 @@ HANGMAN.ui = {
         if (!this.game.isGameOver() && !this.game.isGameWon()) return false;
 
         if (this.game.isGameWon()) {
-            this.game.addScore(10);
+            this.game.addScore(this.points);
             this.updateScore();
+            this.showWinMessage();
 
-            this.renderWinMessage();
-            window.setTimeout(this.initNewGame.bind(this), 3000);
+            window.setTimeout(this.initNewGame.bind(this, words), this.delayToNextWord);
+            return;
         }
 
         if (this.game.isGameOver()) {
@@ -242,32 +311,36 @@ HANGMAN.ui = {
 
             $('#game-over-container .score-display').text('You lose! Your score was: ' + this.game.currentScore);
             this.showGameOver();
-            $('#continue-game').hide();
         }
     },
-
-    updateRecords: function (records) {
-        console.log(records);
-    }
-
 };
 
 //iterar, passar pra lista, chamar callback.
 
 //when document ready
 $(function() {
-    var db;
+    var db,
+        api;
 
     db = HANGMAN.database;
+    api = HANGMAN.api;
 
     db.init();
+
+    api.wordOfTheDayRequest(function (response) {
+        $('#daily-word p').text(response.word 
+                                + ': '
+                                + response.definition);
+    });
 
     db.readWords(function (words) {
         HANGMAN.ui.init(words);
     });
 
     db.getTopScores(function (records) {
-        HANGMAN.ui.updateRecords(records);
-    })
+        HANGMAN.ui.renderRecordTable(records);
+    });
+
+    $('#record-table').hide();
 });
 
