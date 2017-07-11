@@ -7,7 +7,7 @@
 "use strict";
 
 HANGMAN.game = {
-    maxAttempts: 6,
+    maxAttempts: 5,
     allowedCharacters: ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
     wordToGuess: '',
     guessedWord: '',
@@ -46,6 +46,12 @@ HANGMAN.game = {
 
         this.wordToGuess = randomWord;
         this.guessedWord = Array(this.wordToGuess.length).fill(undefined);
+        this.guessedWord = 
+            this.guessedWord.map(function (letter, i) {
+                return ((randomWord[i] === ' ') || (randomWord[i] === '-')) ?
+                    '-'
+                    : letter;
+            });
 
         return randomWord;
     },

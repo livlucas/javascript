@@ -3,11 +3,11 @@
     <head>
         <style type="text/css">
         #js-guessing {
-                height: 32px;
-                line-height: 30px;
                 vertical-align: middle;
-                font-size: 50px;
+                font-size: 36px;
                 margin-bottom: 14px;
+                padding: 12px 0;
+                font-family: monospace;
         }
         #js-wrong-guesses {
                 height: 24px;
@@ -51,9 +51,13 @@
         }
 
         #daily-word {
+            height: 140px;
             background: white;
             border: 1px solid white;
             padding: 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
         }
         #daily-word span {
             color: #aaa;
@@ -68,6 +72,11 @@
 
         .spaced-list li {
             padding: 4px;
+        }
+        .pre-load-images {
+            height: 1px;
+            overflow: hidden;
+            visibility: hidden;
         }
 
         </style>
@@ -101,7 +110,7 @@
                 </div>
                 <div id="navbar-links" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active" id="game"><a href="#">Game <span class="sr-only">(current)</span></a></li>
+                        <li id="game"><a href="#">Game <span class="sr-only">(current)</span></a></li>
 
                         <li id="records"><a href="#">Records</a></li>
 
@@ -117,7 +126,7 @@
                     <h2 id="game-title">HANGMAN <img src="images/hangman.png" height="42" width="42"></h2>
 
                     <div id="daily-word">
-                        <span class="text-uppercase small">Daily Word</span>
+                        <span class="text-uppercase small">Random Definition</span>
 
                         <p></p>
                     </div>
@@ -132,13 +141,13 @@
                                     data-toggle="dropdown" 
                                     aria-haspopup="true" 
                                     aria-expanded="false">
-                                <span class="js-label">Pick a Category</span> <span class="caret"></span>
+                                <span class="js-label">Pick a category...</span> <span class="caret"></span>
                             </button>
                             <ul id="menu-items" class="dropdown-menu">
                             </ul>
                         </div>
 
-                        <a id ="start-game" class="btn btn-primary btn-lg" href="#" role="button">Start</a>
+                        <a id ="start-game" disabled class="btn btn-primary btn-lg" href="#" role="button">Start</a>
                     </div>
 
                     <br>
@@ -156,32 +165,39 @@
                                 <li>This is the Hangman Winning Streak game.</li>
                                 <li>Pick a Category of words and click "Start."</li>
                                 <li>Guess one letter at a time by typing letter and pressing "Go!" </li>
-                                <li>You have 6 attempts to guess the right word.</li>
+                                <li>You have 5 attempts to guess the right word.</li>
                                 <li>You will accumulate 10 points per correct answer.</li>
                                 <li> If you type a correct letter, it will be displayed.</li>
                                 <li>Remaining attempts will also be displayed.</li>
                                 <li>If you can't complete the word, your score will be reset to 0.</li>
                                 <li>If you can't complete the word and you've scored points, type your name to save your score.</li>
-                                <li>The 15 top scorers will be displayed in the menu bar tab "Records."</li>
+                                <li>The 20 top scorers will be displayed in the menu bar tab "Records."</li>
                             </ul>
                         </div>
                    </div>
                 </div>
 
                 <div id="record-table" class="table-responsive js-page">
-                    <p>HANGMAN 15 Best Scores</p>
-                      <table class="table">
-                        <tr>
-                            <th>Name</th>
-                            <th>Score</th>
-                        </tr>
+                    <p>HANGMAN 20 Best Scores</p>
+                      <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th width="30"></th>
+                                <th>Name</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
                       </table>
                     </div>
 
                 <div id="game-panel" class="js-page">
-                    <div class="js-hangman-state">
-                        <img src="images/hangman.png" height="42" width="42">
-                        Category: <span class="js-selected-category"></span>
+                    <div>
+                        <h4><span class="js-selected-category"></span> category</h4>
+                    </div>
+                    <div >
+                        <img class="js-hangman-state" src="images/1.png" height="304">
                     </div>
 
                     <div id="js-guessing"></div>
@@ -197,14 +213,19 @@
                         <button id="js-guess" class="btn btn-primary" type="button">Go!</button>
                     </div>
 
-                    <div id="score"></div>
-
-                    <div id="js-wrong-guesses"></div>
-
                     <div id="js-wrong-letters"></div>
+
+                    <div id="score"></div>
                 </div>
 
                 <div id="game-over-container" class="js-page">
+                    <div style="visibility: hidden">
+                        <h4><span class="js-selected-category"></span> category</h4>
+                    </div>
+
+                    <div >
+                        <img class="js-hangman-state" src="images/1.png" height="304">
+                    </div>
                     <p> <span class="score-display"></span></p>
 
                     <form class="form-inline" id="name-form">
@@ -228,6 +249,16 @@
                     </p>
                 </div>
             </div>
+        </div>
+
+        <!-- pre loading hangman images to assure a smooth transition -->
+        <div class="pre-load-images">
+            <img src="images/0.png">
+            <img src="images/1.png">
+            <img src="images/2.png">
+            <img src="images/3.png">
+            <img src="images/4.png">
+            <img src="images/5.png">
         </div>
 
         <!-- 3rd party code -->

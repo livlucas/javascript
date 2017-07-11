@@ -8,7 +8,6 @@
 
 HANGMAN.ui = {
     delayToNextWord: 3 * 1000,
-
     points: 10,
 
     game: HANGMAN.game,
@@ -29,7 +28,9 @@ HANGMAN.ui = {
 
     bindEvents: function (words) {
         var self = this;
-        $('#start-game').on('click', function() {
+        $('#start-game').on('click', function(e) {
+            e.preventDefault();
+            
             if (self.categorySelected !== undefined 
                 && self.categorySelected !== '') {
                 self.initNewGame(words);
@@ -64,12 +65,17 @@ HANGMAN.ui = {
             $('#start-game').attr('disabled', false);
         });
 
-        $('#submit-score').on('click', function () {
+        $('#submit-score').on('click', function (e) {
+            e.preventDefault();
+
             self.database.saveScore(self.getNameAndScore());
-            self.initNewGame(words);
+            self.showGameMenu();
         });
 
         $('#records').on('click', function () {
+            HANGMAN.database.getTopScores(function (records) {
+                HANGMAN.ui.renderRecordTable(records);
+            });
             self.showRecordTable();
         });
 
@@ -96,11 +102,8 @@ HANGMAN.ui = {
         var nameValue,
             score;
 
-            score = this.game.currentScore;
-
+            score = this.currentScore;
             nameValue = $('#exampleInputName2').val();
-            console.log(nameValue);
-            console.log(score);
 
             return {
                 name: nameValue,
@@ -128,16 +131,18 @@ HANGMAN.ui = {
         return $categoryList;
     },
 
-    generateRecordTableRow: function (record) {
+    generateRecordTableRow: function (record, i) {
         var html,
             $recordTable;
 
         html = '<tr class ="record-row">'
+                + '<td class="position"></td>'
                 + '<td class="name"></td>'
                 + '<td class="score"></td>'
             + '</tr>';
 
         $recordTable = $(html);
+        $recordTable.find('.position').append(i);
         $recordTable.find('.name').append(record.name);
         $recordTable.find('.score').append(record.score);
 
@@ -145,12 +150,13 @@ HANGMAN.ui = {
     },
 
     renderRecordTable: function (records) {
-        records.forEach(function (e) {
+        $('.table tbody').empty();
+        records.forEach(function (e, i) {
             var $recordList;
 
-            $recordList = HANGMAN.ui.generateRecordTableRow(e);
+            $recordList = HANGMAN.ui.generateRecordTableRow(e, i + 1);
 
-            $('.table').append($recordList);
+            $('.table tbody').append($recordList);
         });
     },
 
@@ -203,8 +209,8 @@ HANGMAN.ui = {
     },
 
     showGameOver: function () {        
-        $('.js-page').slideUp();
-        $('#game-over-container').slideDown();
+        $('.js-page').hide();
+        $('#game-over-container').show();
     },
 
     showWinMessage: function () {
@@ -233,12 +239,15 @@ HANGMAN.ui = {
 
         state = this.game
         .guessedWord
-        .map(function(item) { return item === undefined ? '_' : item;})
+        .map(function(item, index) { 
+            return item === undefined ? '_' : item;
+        })
         .join(' '); 
 
         $('#js-guessing').text(state);
 
-        this.updateRemainingAttempts();
+        this.updateHangman();
+        // this.updateRemainingAttempts();
         this.updateScore();
         this.updateWrongLetters();
     },
@@ -247,10 +256,16 @@ HANGMAN.ui = {
         $('#score').text('your score is: ' + this.game.score);
     },
 
-    updateRemainingAttempts: function () {
-        var i,
-            lengthOfWord;
+    updateHangman: function () {
+        var attempts;
 
+        attempts = this.game.maxAttempts
+            - this.game.getRemainingAttempts();
+
+        $('.js-hangman-state').attr('src', 'images/' + attempts + '.png');
+    },
+
+    updateRemainingAttempts: function () {
         $('#js-wrong-guesses').text(
             'you have ' 
             + this.game.getRemainingAttempts() 
@@ -301,16 +316,25 @@ HANGMAN.ui = {
 
         if (this.game.isGameOver()) {
             if(this.game.score === 0) {
-                $('#game-over-container p').text('You lose! Click continue to start a new game!');
+                $('#game-over-container .score-display').html('You lose! '
+                    + 'Your word was <strong>' + this.game.wordToGuess + '</strong>.<br>'
+                    + 'Click continue to start a new game!');
                 $('#name-form').hide();
-                //hide game over panel
-                //show contiue button
-            }
-            this.game.currentScore = this.game.score;
-            this.game.resetScore();
+                $('#continue-game').show();
+            } else {
+                this.currentScore = this.game.score;
 
-            $('#game-over-container .score-display').text('You lose! Your score was: ' + this.game.currentScore);
+                $('#name-form').show();
+                $('#continue-game').hide();
+                $('#game-over-container .score-display')
+                    .html('You lose! '
+                        + 'Your word was <strong>' + this.game.wordToGuess + '</strong>.<br>'
+                        + 'Your final score is: ' + this.currentScore);
+            }
+
+            this.game.resetScore();
             this.showGameOver();
+            $('#name-form input').focus();
         }
     },
 };
